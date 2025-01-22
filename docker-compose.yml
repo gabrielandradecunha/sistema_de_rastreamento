@@ -1,0 +1,37 @@
+services:
+  postgres:
+    container_name: postgres_rastreamento
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rastreamento
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rastreamento
+    restart: always
+  geoserver:
+    image: docker.osgeo.org/geoserver:2.26.x
+    container_name: geoserver_gabriel
+    ports:
+      - "8080:8080"
+    environment:
+      - GEOSERVER_DATA_DIR=/opt/geoserver_data
+    volumes:
+      - geoserver_data:/opt/geoserver_data
+    networks:
+      - rastreamento
+    restart: always
+  
+volumes:
+  postgres_data:
+    driver: local
+  geoserver_data:
+    driver: local
+
+networks:
+  rastreamento:
+    driver: bridge

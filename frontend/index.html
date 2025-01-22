@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Usuário</title>
+</head>
+<body>
+    <h1>Formulário de Usuário</h1>
+
+    <!-- Formulário para obter um usuário -->
+    <form id="userForm" method="post">
+        <label for="email">email:</label>
+        <input type="text" id="email" name="email" required><br><br>
+
+        <label for="senha">senha:</label>
+        <input type="password" id="senha" name="senha" required><br><br>
+
+        <button type="submit">Obter Usuário</button>
+    </form>
+
+    <h2>Resposta:</h2>
+    <pre id="response"></pre>
+
+    <script>
+        document.getElementById('userForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Evitar o envio do formulário de forma tradicional
+
+            // Obter os valores dos campos
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            // Criar o FormData para enviar os dados como application/x-www-form-urlencoded
+            const formData = new URLSearchParams();
+            formData.append('email', email);
+            formData.append('senha', senha);
+
+            try {
+                // Enviar os dados para o FastAPI
+                const response = await fetch('http://127.0.0.1:8081/getuser', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json(); // Espera a resposta em JSON
+                document.getElementById('response').textContent = JSON.stringify(result, null, 2); // Exibe a resposta no navegador
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('response').textContent = 'Erro ao enviar os dados';
+            }
+        });
+    </script>
+</body>
+</html>
