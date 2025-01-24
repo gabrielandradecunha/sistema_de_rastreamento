@@ -3,50 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta</title>
-    <link rel="stylesheet" href="css/main.css">
+    <title>Localizar Usuario</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/ol@latest/dist/ol.css" />
 </head>
 <body>
-    <h1>Consulta</h1>
 
-    <form id="userForm" method="post">
-        <label for="email">email:</label>
-        <input type="text" id="email" name="email" required><br><br>
-
-        <label for="senha">senha:</label>
-        <input type="password" id="senha" name="senha" required><br><br>
-
-        <button type="submit">Obter Usuário</button>
-    </form>
-
-    <h2>Resposta:</h2>
-    <pre id="response"></pre>
-    <hr>
+    <a href="create.html">Criar Usuario</a>
+    <h1>Localizar Usuario</h1>
     
-    <h1>Criar Usuário</h1>
+    <div id="container">
+        <div id="form-container">
+            <form id="userForm" method="post">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required><br><br>
 
-    <form id="CreateUserForm" method="post">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required><br><br>
 
-        <label for="nome">nome:</label>
-        <input type="text" id="nome" name="nome" required><br><br>
+                <button type="submit" class="enviar">Obter Usuário</button>
+            </form>
 
-        <label for="email">email:</label>
-        <input type="text" id="email" name="email" required><br><br>
+            <h2>Resposta:</h2>
+            <pre id="response"></pre>
+        </div>
 
-        <label for="senha">senha:</label>
-        <input type="password" id="senha" name="senha" required><br><br>
+        <div id="map"></div>
+    </div>
 
-        <label for="longitude">longitude:</label>
-        <input type="number" id="longitude" name="longitude" required><br><br>
+    <script src="https://unpkg.com/ol@latest/dist/ol.js"></script>
 
-        <label for="latitude">latitude:</label>
-        <input type="number" id="latitude" name="latitude" required><br><br>
-
-        <button type="submit">Criar Usuário</button>
-    </form>
     <script>
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                }),
+                new ol.layer.Tile({
+                    source: new ol.source.TileWMS({
+                        url: 'http://localhost:8080/geoserver/ows',
+                        serverType: 'geoserver',
+                        params: {
+                            'LAYERS': 'workspace:nome_da_sua_layer',
+                            'VERSION': '1.1.1'
+                        }
+                    })
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([0, 0]),
+                zoom: 2
+            })
+        });
+
         document.getElementById('userForm').addEventListener('submit', async function(e) {
-            e.preventDefault(); 
+            e.preventDefault();
 
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
@@ -62,42 +74,24 @@
                 });
 
                 const result = await response.json(); 
-                document.getElementById('response').textContent = JSON.stringify(result, null, 2); 
+                document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+
+                const longitude = result.longitude;
+                const latitude = result.latitude;
+
+                updateMap(longitude, latitude);
+
             } catch (error) {
                 console.error('Erro:', error);
                 document.getElementById('response').textContent = 'Erro ao enviar os dados';
             }
         });
 
-        document.getElementById('CreateUserForm').addEventListener('submit', async function(e) {
-            e.preventDefault(); 
-
-            const nome = document.getElementById('nome').value;
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            const longitude = document.getElementById('longitude').value;
-            const latitude = document.getElementById('latitude').value;
-
-            const formData = new URLSearchParams();
-            formData.append('nome', nome);
-            formData.append('email', email);
-            formData.append('senha', senha);
-            formData.append('longitude', longitude);
-            formData.append('latitude', latitude);
-
-            try {
-                const response = await fetch('http://127.0.0.1:8081/createuser', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json(); 
-                document.getElementById('response').textContent = JSON.stringify(result, null, 2); 
-            } catch (error) {
-                console.error('Erro:', error);
-                document.getElementById('response').textContent = 'Erro ao enviar os dados';
-            }
-        });
+        function updateMap(latitude, longitude) {
+            var view = map.getView();
+            view.setCenter(ol.proj.fromLonLat([longitude, latitude]));
+            view.setZoom(15);
+        }
     </script>
 </body>
 </html>

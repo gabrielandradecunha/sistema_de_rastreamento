@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/create.css">
+    <title>Criar Usuário</title>
+    <link rel="stylesheet" href="https://unpkg.com/ol@latest/dist/ol.css" />
+</head>
+<body>
+
+    <a href="index.html">Consulta</a>
+    <h1>Criar Usuário</h1>
+    
+    <div id="container">
+        <div id="form-container">
+            <form id="CreateUserForm" method="post">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required><br><br>
+
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required><br><br>
+
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required><br><br>
+
+                <label for="longitude">Longitude:</label>
+                <input type="text" id="longitude" name="longitude" required><br><br>
+
+                <label for="latitude">Latitude:</label>
+                <input type="text" id="latitude" name="latitude" required><br><br>
+
+                <button type="submit">Criar Usuário</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/ol@latest/dist/ol.js"></script>
+
+    <script>
+
+        document.getElementById('CreateUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const longitude = document.getElementById('longitude').value;
+            const latitude = document.getElementById('latitude').value;
+
+            const formData = new URLSearchParams();
+            formData.append('nome', nome);
+            formData.append('email', email);
+            formData.append('senha', senha);
+            formData.append('longitude', longitude);
+            formData.append('latitude', latitude);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8081/createuser', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json(); 
+                document.getElementById('response').textContent = JSON.stringify(result, null, 2); 
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('response').textContent = 'Erro ao enviar os dados';
+            }
+        });
+    </script>
+</body>
+</html>

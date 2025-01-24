@@ -7,7 +7,7 @@ router = APIRouter()
 def getusers(email: str = Form(...), senha: str = Form(...)):
     user = User.getuser(email, senha)
     result = {"id": user[0], "nome": user[1], "email": user[2], 
-    "logintude":user[4], "latitude":user[5]}  
+    "longitude":user[4], "latitude":user[5]}  
     
     return result 
 
@@ -21,4 +21,4 @@ def createuser(
 ):
     User.createuser(nome, email, senha, longitude, latitude)
     user = User.getuser(email, senha)
-    return {"message": f"Usuario criado com sucesso"}
+    return {"message": "Usuario criado com sucesso"}
