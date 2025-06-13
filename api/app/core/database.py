@@ -15,5 +15,9 @@ DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 try:
     connection = psycopg2.connect(DATABASE_URL)
     print("Conectado ao banco de dados")
+    cursor = connection.cursor()
+    cursor.execute("SELECT current_database();")
+    print("Banco conectado:", cursor.fetchone()[0])
+    cursor.close()
 except psycopg2.Error as e:
     print(f"Erro ao conectar ao banco de dados: {e}")

@@ -68,7 +68,7 @@
             formData.append('senha', senha);
 
             try {
-                const response = await fetch('http://127.0.0.1:8081/getuser', {
+                const response = await fetch('http://127.0.0.1:8585/getuser', {
                     method: 'POST',
                     body: formData
                 });
@@ -87,11 +87,41 @@
             }
         });
 
-        function updateMap(latitude, longitude) {
+        function updateMap(longitude, latitude) {
             var view = map.getView();
-            view.setCenter(ol.proj.fromLonLat([longitude, latitude]));
-            view.setZoom(15);
+            var coord = ol.proj.fromLonLat([latitude, longitude]);
+            view.setCenter(coord);
+            view.setZoom(17);
+
+            var userPoint = new ol.Feature({
+                geometry: new ol.geom.Point(coord)
+            });
+
+            userPoint.setStyle(new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 15,
+                    fill: new ol.style.Fill({ color: 'red' }),
+                    stroke: new ol.style.Stroke({ color: 'blue', width: 4 })
+                })
+            }));
+
+            var vectorSource = new ol.source.Vector({
+                features: [userPoint]
+            });
+
+            var vectorLayer = new ol.layer.Vector({
+                source: vectorSource
+            });
+
+            map.getLayers().forEach(layer => {
+                if (layer instanceof ol.layer.Vector) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            map.addLayer(vectorLayer);
         }
+
     </script>
 </body>
 </html>

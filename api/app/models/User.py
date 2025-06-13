@@ -86,3 +86,25 @@ class User:
             print(f"Erro ao obter usuário: {e}")
         finally:
             cursor.close()
+
+    @staticmethod
+    def update(email, longi, lati):
+        try:
+            cursor = connection.cursor()
+            query = """
+                UPDATE users
+                SET longitude = %s,
+                    latitude = %s
+                WHERE email = %s
+            """
+            cursor.execute(query, (longi, lati, email))
+            if cursor.rowcount == 0:
+                print("Usuário não encontrado. Nenhuma atualização realizada.")
+            else:
+                print("Usuário atualizado com sucesso.")
+            connection.commit()
+        except Exception as e:
+            connection.rollback()
+            print(f"Erro ao atualizar usuário: {e}")
+        finally:
+            cursor.close()
