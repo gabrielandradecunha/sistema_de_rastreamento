@@ -56,6 +56,7 @@ def call_mqtt():
     mqtt_thread.start()
 
 call_mqtt()
+
 ##################################################################################
 
 
@@ -79,6 +80,6 @@ app.include_router(users.router, tags=["getuser"])
 def read_root():
     return {"message": "API para o sistema de rastreamento de veiculos"}
 
-# @app.get("/setupdb")
-# def setup_db():
-#     setupdb()
+@app.get("/setupdb")
+def setup_db():
+    setupdb()
