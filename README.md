@@ -22,7 +22,7 @@ Setup database
 ```bash
 curl -X POST http://localhost:8000/setupdb
 ```
-Create postgres trigger (oiptional)
+Create postgres trigger 
 ```bash
 sudo docker exec -it postgres_rastreamento psql -U postgres -d rastreamento -f /docker-entrypoint-initdb.d/init.sql
 ```

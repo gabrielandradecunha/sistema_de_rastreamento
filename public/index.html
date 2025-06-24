@@ -76,10 +76,10 @@
                 const result = await response.json(); 
                 document.getElementById('response').textContent = JSON.stringify(result, null, 2);
 
-                const longitude = result.longitude_atual;
-                const latitude = result.latitude_atual;
+                const historico = result.historico;
 
-                updateMap(longitude, latitude);
+                updateMap(historico);
+
 
             } catch (error) {
                 console.error('Erro:', error);
@@ -87,32 +87,51 @@
             }
         });
 
-        function updateMap(longitude, latitude) {
-            var view = map.getView();
-            var coord = ol.proj.fromLonLat([latitude, longitude]);
-            view.setCenter(coord);
-            view.setZoom(17);
+        function updateMap(historico) {
+            if (!historico || historico.length === 0) return;
 
-            var userPoint = new ol.Feature({
-                geometry: new ol.geom.Point(coord)
+            // Transforma cada ponto do histórico em uma feature
+            const features = historico.map(coord => {
+                const olCoord = ol.proj.fromLonLat([coord.longitude, coord.latitude]);
+                const point = new ol.Feature({
+                    geometry: new ol.geom.Point(olCoord)
+                });
+
+                point.setStyle(new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: 6,
+                        fill: new ol.style.Fill({ color: 'green' }),
+                        stroke: new ol.style.Stroke({ color: 'green', width: 10 })
+                    })
+                }));
+
+                return point;
             });
 
-            userPoint.setStyle(new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 15,
-                    fill: new ol.style.Fill({ color: 'red' }),
-                    stroke: new ol.style.Stroke({ color: 'blue', width: 4 })
+            // (Opcional) Traçar linha entre os pontos
+            const lineCoords = historico.map(coord => ol.proj.fromLonLat([coord.longitude, coord.latitude]));
+            const line = new ol.Feature({
+                geometry: new ol.geom.LineString(lineCoords)
+            });
+
+            line.setStyle(new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'green',
+                    width: 3
                 })
             }));
 
-            var vectorSource = new ol.source.Vector({
-                features: [userPoint]
+            features.push(line);
+
+            const vectorSource = new ol.source.Vector({
+                features: features
             });
 
-            var vectorLayer = new ol.layer.Vector({
+            const vectorLayer = new ol.layer.Vector({
                 source: vectorSource
             });
 
+            // Remove camadas vetoriais anteriores
             map.getLayers().forEach(layer => {
                 if (layer instanceof ol.layer.Vector) {
                     map.removeLayer(layer);
@@ -120,7 +139,14 @@
             });
 
             map.addLayer(vectorLayer);
+
+            // Centraliza o mapa no último ponto do histórico
+            const last = historico[historico.length - 1];
+            const center = ol.proj.fromLonLat([last.longitude, last.latitude]);
+            map.getView().setCenter(center);
+            map.getView().setZoom(20);
         }
+
 
     </script>
 </body>

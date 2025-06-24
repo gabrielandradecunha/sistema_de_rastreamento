@@ -29,11 +29,13 @@ class HistoryLocation:
     def gethistory(user_id):
         try:
             cursor = connection.cursor()
-            query = "SELECT * FROM history_location WHERE user_id=%s"
-            cursor.execute(query, (user_id))
-            result = cursor.fetchone()
-            return result
+            query = "SELECT longitude, latitude FROM history_location WHERE user_id = %s ORDER BY id ASC"
+            cursor.execute(query, (user_id,))
+            result = cursor.fetchall()
+            history = [{"longitude": row[0], "latitude": row[1]} for row in result]
+            return history
         except Exception as e:
             print(f"Erro ao obter historico de usuarios: {e}")
+            return []
         finally:
             cursor.close()
