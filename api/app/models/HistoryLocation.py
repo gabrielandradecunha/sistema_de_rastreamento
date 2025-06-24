@@ -23,3 +23,17 @@ class HistoryLocation:
             print(f"Erro ao criar a tabela: {e}")
         finally:
             cursor.close()
+
+    # Get History Method
+    @staticmethod
+    def gethistory(user_id):
+        try:
+            cursor = connection.cursor()
+            query = "SELECT * FROM history_location WHERE user_id=%s"
+            cursor.execute(query, (user_id))
+            result = cursor.fetchone()
+            return result
+        except Exception as e:
+            print(f"Erro ao obter historico de usuarios: {e}")
+        finally:
+            cursor.close()

@@ -76,8 +76,8 @@
                 const result = await response.json(); 
                 document.getElementById('response').textContent = JSON.stringify(result, null, 2);
 
-                const longitude = result.longitude;
-                const latitude = result.latitude;
+                const longitude = result.longitude_atual;
+                const latitude = result.latitude_atual;
 
                 updateMap(longitude, latitude);
 
