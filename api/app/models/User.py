@@ -78,12 +78,12 @@ class User:
     def getuser(email, senha):
         try:
             cursor = connection.cursor()
-            query = "SELECT * FROM users WHERE email=%s AND senha=%s"
-            cursor.execute(query, (email, senha))
-            result = cursor.fetchone()
-            return result
+            cursor.execute("SELECT * FROM users WHERE email = %s AND senha = %s", (email, senha))
+            return cursor.fetchone()
         except Exception as e:
-            print(f"Erro ao obter usuário: {e}")
+            connection.rollback()
+            print(f"Erro ao buscar usuário: {e}")
+            return None
         finally:
             cursor.close()
 
