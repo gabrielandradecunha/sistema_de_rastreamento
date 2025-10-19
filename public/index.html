@@ -73,7 +73,17 @@
                     body: formData
                 });
 
-                const result = await response.json(); 
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Erro da API:', text);
+                    document.getElementById('response').textContent = `Erro: ${response.status} - ${text}`;
+                    return;
+                }
+
+                const result = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+
+
                 document.getElementById('response').textContent = JSON.stringify(result, null, 2);
 
                 const historico = result.historico;
