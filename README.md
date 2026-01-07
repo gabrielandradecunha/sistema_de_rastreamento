@@ -16,7 +16,7 @@ O fluxo funciona da seguinte forma: dispositivos enviam coordenadas via MQTT, um
 
 - **Banco PostgreSQL:** executar o script `init.sql` no banco de dados. Ele cria uma função e um trigger responsáveis por inserir automaticamente, na tabela `history_location`, a localização do usuário armazenada na tabela `users`.
 
-- **Backend Spring Boot:** aplicação responsável por expor as rotas REST para criação de usuários e consulta do histórico de coordenadas. Esses dados são consumidos pelo frontend para exibição do mapa de localizações.
+- **Backend Spring Boot:** aplicação responsável por expor as rotas REST para criação de usuários e consulta do histórico de coordenadas. Esses dados são consumidos pelo frontend para exibição do mapa de localizações, a API possui documentação com Swagger/OpenAPI
 
 - **Script Python MQTT/DB** conecta-se ao broker MQTT, consome mensagens em JSON contendo coordenadas, realiza o tratamento dos dados e os insere no banco de dados. A partir disso, o histórico de localização do usuário é persistido automaticamente.
 
