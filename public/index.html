@@ -68,7 +68,7 @@
             formData.append('senha', senha);
 
             try {
-                const response = await fetch('http://127.0.0.1:8585/getuser', {
+                const response = await fetch('http://127.0.0.1:8081/api/getuser', {
                     method: 'POST',
                     body: formData
                 });

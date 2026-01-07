@@ -1,1 +1,10 @@
-api/.venv/
+.vscode/
+.venv/
+venv/
+api/target/
+api/.idea/
+.idea/
+api/*.iws
+api/*.iml
+api/*.ipr
+api/.mvn/

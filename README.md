@@ -1,28 +1,42 @@
-# sistema de rastreamento de veiculos
-Sistema de rastreamento veicular desenvolvido com FastAPI, utilizando o protocolo MQTT para comunicação com microcontroladores. A localização dos veículos é exibida em um mapa interativo por meio do GeoServer e da biblioteca OpenLayers.
+# Sistema GIS/IoT de rastreamento de veiculos em tempo real com Spring Boot, OpenLayers, MQTT e Docker 
 
-<i>Vehicle tracking system developed with FastAPI, using the MQTT protocol for communication with microcontrollers. The location of vehicles is displayed on an interactive map through GeoServer and the OpenLayers library.</i>
+Sistema de rastreamento veicular desenvolvido com backend em Spring Boot, utilizando o protocolo MQTT para comunicação entre microcontroladores ESP32 e o sistema. As coordenadas dos veículos são persistidas em banco de dados e exibidas em um mapa interativo por meio do GeoServer e da biblioteca OpenLayers.
+
+<i> Vehicle tracking system developed with a Spring Boot backend, using the MQTT protocol for communication between ESP32 microcontrollers and the system. Vehicle coordinates are stored in a database and displayed on an interactive map using GeoServer and the OpenLayers library. </i>
+
 <img src="image.png" />
 
-## Setup
-Up PostgreSQL and Geoserver container with docker-compose
+# Visão geral da arquitetura
+
+O sistema é composto por um backend em Spring responsável pela ingestão e disponibilização dos dados, um banco de dados PostgreSQL com lógica automatizada de histórico, um script de coleta via MQTT e um frontend para visualização geográfica das informações.
+
+O fluxo funciona da seguinte forma: dispositivos enviam coordenadas via MQTT, um script Python consome essas mensagens e persiste os dados no banco PostgreSQL. Funções e triggers no banco garantem o registro automático do histórico de localização por usuário. O backend Spring fornece endpoints REST para consulta dessas informações, que são renderizadas no frontend em um mapa interativo.
+
+# Componentes do sistema
+
+- **Banco PostgreSQL:** executar o script `init.sql` no banco de dados. Ele cria uma função e um trigger responsáveis por inserir automaticamente, na tabela `history_location`, a localização do usuário armazenada na tabela `users`.
+
+- **Backend Spring Boot:** aplicação responsável por expor as rotas REST para criação de usuários e consulta do histórico de coordenadas. Esses dados são consumidos pelo frontend para exibição do mapa de localizações.
+
+- **Script Python MQTT/DB** conecta-se ao broker MQTT, consome mensagens em JSON contendo coordenadas, realiza o tratamento dos dados e os insere no banco de dados. A partir disso, o histórico de localização do usuário é persistido automaticamente.
+
+- **Frontend com OpenLayers:** frontend desenvolvido com HTML, CSS e JavaScript, utilizando a biblioteca JavaScript OpenLayers e o servidor de mapas GeoServer (em container Docker) para renderizar no mapa as localizações dos usuários, representadas como pontos.
+
+# Easy Setup
+
+Subir PostgreSQL e GeoServer (servidor de mapas) com Docker Compose:
 ```bash
 sudo docker-compose up -d
 ```
 
-Setup API and create database
-```bash
-cd api/
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python3 -m
-```
-Setup database
-```bash
-curl -X POST http://localhost:8000/setupdb
-```
-Create postgres trigger 
+Executar script para o banco de dados PostgreSQL:
 ```bash
 sudo docker exec -it postgres_rastreamento psql -U postgres -d rastreamento -f /docker-entrypoint-initdb.d/init.sql
 ```
+
+Rodar o backend Spring Boot:
+```bash
+cd api/
+mvn spring-boot:run
+```
+## Fico à disposição para esclarecimentos adicionais.
