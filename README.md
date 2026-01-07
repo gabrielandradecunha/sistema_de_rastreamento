@@ -34,9 +34,16 @@ Executar script para o banco de dados PostgreSQL:
 sudo docker exec -it postgres_rastreamento psql -U postgres -d rastreamento -f /docker-entrypoint-initdb.d/init.sql
 ```
 
-Rodar o backend Spring Boot:
+Rodar o backend Spring Boot diretamente:
 ```bash
 cd api/
+mvn clean install
 mvn spring-boot:run
 ```
+ou executar .jar
+```bash
+cd api/
+java -jar api_rastreamento.jar
+```
+
 ## Fico à disposição para esclarecimentos adicionais.
