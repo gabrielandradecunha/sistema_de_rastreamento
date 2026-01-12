@@ -47,3 +47,5 @@ java -jar api_rastreamento.jar
 ```
 
 ## Fico à disposição para esclarecimentos adicionais.
+<i>Relacionamento de tabelas do banco de dados</i>
+<img src="relacionamento.png" />
